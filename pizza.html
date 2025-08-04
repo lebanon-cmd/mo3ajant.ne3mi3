@@ -1,0 +1,332 @@
+    @media(max-width:600px){
+      .categories{padding:0 4px}
+      .categories h2{font-size:1.5rem}
+      .grid{
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+        gap:24px;
+      }
+      .card{
+        min-width:0;
+        max-width:100%;
+        height:350px;
+        flex:none;
+        scroll-snap-align:none;
+      .card img{height:200px}
+      .card h3{font-size:1.3rem;padding:16px}
+    }
+    
+    
+    
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>قائمة بيتزا - معجنات نعمة</title>
+  <style>
+    body { font-family: 'Arial'; background: #fffdf7; padding: 20px; }
+    h1, h2 { color: #444; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+    button { background-color: #2ecc71; color: #fff; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background-color: #27ae60; }
+    .delete-btn { background:#e74c3c; margin-right:10px; padding:4px 8px; border-radius:4px; }
+    .decrease-btn { background:#f39c12; margin-right:5px; padding:4px 8px; border-radius:4px; }
+    #order-summary { background:#f0f0f0; padding:15px; border-radius:8px; margin-top:30px; }
+    li { margin-bottom:8px; }
+    .whatsapp-btn { background:#25D366; width:100%; padding:12px; font-size:16px; color:#fff; border:none; border-radius:4px; margin-top:10px; cursor:pointer; }
+    .whatsapp-btn:hover { background:#1ebe5d; }
+    .unavailable { color: #999; font-style: italic; }
+    .nav-links { margin-bottom: 20px; }
+    .nav-links a { margin-left: 10px; color: #d35400; text-decoration: none; font-weight: bold; }
+    .nav-links a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="nav-links">
+    <a href="website.html">الصفحة الرئيسية</a>
+    <a href="manakish.html">مناقيش</a>
+    <a href="moaajanat.html">معجنات</a>
+    <a href="kaakeh.html">كعك</a>
+    <a href="jreesh.html">جريش</a>
+  </div>
+
+  <div class="categories">
+    <h2>البيتزا</h2>
+    <div id="menu-grid" class="grid"></div>
+    <div style="text-align:center;margin-top:18px;">
+      <button id="prevPageBtn" style="margin:0 8px;display:none">السابق</button>
+      <span id="pageInfo"></span>
+      <button id="nextPageBtn" style="margin:0 8px;display:none">التالي</button>
+    </div>
+  </div>
+  <h2>طلبك</h2>
+  <ul id="order-list"></ul>
+  <div id="order-summary"></div>
+  <button class="whatsapp-btn" id="deliveryBtn">إرسال الطلب عبر واتساب</button>
+  <div id="deliveryModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.4);z-index:2000;justify-content:center;align-items:center;">
+    <div style="background:#fff;padding:32px 24px;border-radius:16px;max-width:90vw;width:350px;text-align:center;position:relative;">
+      <button onclick="closeDeliveryModal()" style="position:absolute;top:10px;left:10px;background:none;border:none;font-size:1.5rem;color:#d35400;cursor:pointer">&times;</button>
+      <h3 style="color:#d35400;margin-bottom:18px">اختر منطقة التوصيل</h3>
+      <div style="display:flex;gap:10px;justify-content:center;margin-bottom:10px;">
+        <label style="display:flex;align-items:center;gap:4px;font-size:1.1rem;cursor:pointer;">
+          <input type="radio" name="deliveryType" value="with" checked style="accent-color:#d35400;"> مع توصيل
+        </label>
+        <label style="display:flex;align-items:center;gap:4px;font-size:1.1rem;cursor:pointer;">
+          <input type="radio" name="deliveryType" value="without" style="accent-color:#d35400;"> بدون توصيل
+        </label>
+      </div>
+      <select id="deliverySelect" style="width:100%;padding:10px 8px;font-size:1.1rem;margin-bottom:18px">
+        <option value="">اختر المنطقة</option>
+        <option value="saksakie">سكسكية - 100 ل.ل</option>
+        <option value="loubie">لوبية - 200 ل.ل</option>
+        <option value="bablie">بابليّة - 200 ل.ل</option>
+        <option value="sarafand">الصرفند - 200 ل.ل</option>
+        <option value="saksakie_khayzaran">سكسكية خيزران - 200 ل.ل</option>
+      </select>
+      <button onclick="sendWhatsAppOrder()" style="background:#d35400;color:#fff;font-weight:700;padding:12px 28px;border-radius:40px;font-size:1.1rem;border:none;cursor:pointer;">تأكيد وإرسال الطلب</button>
+    </div>
+  </div>
+  <!-- ============ سكربت الطلب ============ -->
+  <script>
+    // إصلاح: إزالة سكربت مكرر أو غير مغلق
+    // قائمة البيتزا
+    const menu = [
+      { name: "بيتزا فاهيتا", normal: 300000, rolled: 550000 },
+      { name: "بيتزا بيروني", normal: 300000, rolled: 550000 },
+      { name: "بيتزا دجاج", normal: 300000, rolled: 550000 },
+      { name: "بيتزا خضرة", normal: 300000, rolled: 500000 },
+      { name: "بيتزا مارغريتا", normal: 250000, rolled: 350000 },
+      { name: "بيتزا مرتديلا", normal: 250000, rolled: 350000 },
+    ];
+
+    // Pagination variables
+    const itemsPerPage = 3;
+    let currentPage = 1;
+
+    function renderMenuPage() {
+      const grid = document.getElementById('menu-grid');
+      grid.innerHTML = '';
+      const start = (currentPage - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      const pageItems = menu.slice(start, end);
+      pageItems.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h3>${item.name}</h3>
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;">
+            <div style="margin-bottom:12px;">
+              <span style="font-weight:700;">عادي:</span> 
+              ${item.normal ? `<span style='color:#27ae60;font-weight:700;'>${item.normal.toLocaleString()} ل.ل</span><br><button onclick=\"addToOrder('${item.name} - عادي',${item.normal})\">أطلب الآن</button>` : '<span class="unavailable">غير متوفر</span>'}
+            </div>
+            <div>
+              <span style="font-weight:700;">مشروحة:</span> 
+              ${item.rolled ? `<span style='color:#27ae60;font-weight:700;'>${item.rolled.toLocaleString()} ل.ل</span><br><button onclick=\"addToOrder('${item.name} - مشروحة',${item.rolled})\">أطلب الآن</button>` : '<span class="unavailable">غير متوفر</span>'}
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+      // Pagination controls
+      const totalPages = Math.ceil(menu.length / itemsPerPage);
+      document.getElementById('pageInfo').textContent = `صفحة ${currentPage} من ${totalPages}`;
+      document.getElementById('prevPageBtn').style.display = currentPage > 1 ? '' : 'none';
+      document.getElementById('nextPageBtn').style.display = currentPage < totalPages ? '' : 'none';
+    }
+
+    document.getElementById('prevPageBtn').onclick = function() {
+      if(currentPage > 1) {
+        currentPage--;
+        renderMenuPage();
+      }
+    };
+    document.getElementById('nextPageBtn').onclick = function() {
+      const totalPages = Math.ceil(menu.length / itemsPerPage);
+      if(currentPage < totalPages) {
+        currentPage++;
+        renderMenuPage();
+      }
+    };
+
+    let order = JSON.parse(localStorage.getItem('order_all')) || {};
+
+    function saveOrder() {
+      localStorage.setItem('order_all', JSON.stringify(order));
+    }
+
+    function addToOrder(item, price) {
+      if(order[item]) {
+        order[item].quantity += 1;
+      } else {
+        order[item] = { price: parseInt(price), quantity: 1 };
+      }
+      saveOrder();
+      renderOrder();
+    }
+
+    function decreaseQuantity(item) {
+      if(order[item]) {
+        order[item].quantity -= 1;
+        if(order[item].quantity <= 0) {
+          delete order[item];
+        }
+        saveOrder();
+        renderOrder();
+      }
+    }
+
+    function removeItem(item) {
+      delete order[item];
+      saveOrder();
+      renderOrder();
+    }
+
+    function renderOrder() {
+      const orderList = document.getElementById('order-list');
+      const orderSummary = document.getElementById('order-summary');
+      orderList.innerHTML = '';
+      let total = 0;
+      for (const [item, details] of Object.entries(order)) {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          ${item} - ${details.quantity} × ${details.price.toLocaleString()} ل.ل = ${(details.price * details.quantity).toLocaleString()} ل.ل
+          <button class="decrease-btn" onclick="decreaseQuantity('${item}')">-</button>
+          <button onclick="addToOrder('${item}', '${details.price}')">+</button>
+          <button class="delete-btn" onclick="removeItem('${item}')">حذف</button>
+        `;
+        orderList.appendChild(li);
+        total += details.price * details.quantity;
+      }
+      orderSummary.textContent = `الإجمالي: ${total.toLocaleString()} ل.ل`;
+    }
+
+    function openDeliveryModal() {
+      document.getElementById('deliveryModal').style.display = 'flex';
+    }
+    function closeDeliveryModal() {
+      document.getElementById('deliveryModal').style.display = 'none';
+    }
+    function sendOrderWithDelivery() {
+      if(Object.keys(order).length === 0) {
+        alert('لم تقم بإضافة أي صنف للطلب.');
+        return;
+      }
+      let message = 'طلب بيتزا من معجنات نعمة:\n\n';
+      for (const [item, details] of Object.entries(order)) {
+        message += `${item} - ${details.quantity} × ${details.price.toLocaleString()} ل.ل = ${(details.price * details.quantity).toLocaleString()} ل.ل\n`;
+      }
+      const total = Object.values(order).reduce((sum, details) => sum + details.price * details.quantity, 0);
+      message += `\nالإجمالي: ${total.toLocaleString()} ل.ل\n\n`;
+      const deliveryPrices = {
+        saksakie: 100,
+        loubie: 200,
+        bablie: 200,
+        sarafand: 200,
+        saksakie_khayzaran: 200
+      };
+      const deliveryNames = {
+        saksakie: 'سكسكية',
+        loubie: 'لوبية',
+        bablie: 'بابليّة',
+        sarafand: 'الصرفند',
+        saksakie_khayzaran: 'سكسكية خيزران'
+      };
+      const selected = document.getElementById('deliverySelect').value;
+      if(selected && deliveryPrices[selected]) {
+        message += `\nالتوصيل إلى: ${deliveryNames[selected]}\nسعر التوصيل: ${deliveryPrices[selected].toLocaleString()} ل.ل`;
+      } else {
+        message += '\nبدون توصيل';
+      }
+      const phone = '+96176657606';
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+      window.open(url, '_blank');
+      closeDeliveryModal();
+    }
+
+
+    renderMenuPage();
+    renderOrder();
+
+    window.addEventListener('storage', (event) => {
+      if(event.key === 'order_all') {
+        order = JSON.parse(event.newValue) || {};
+        renderOrder();
+      }
+    });
+  </script>
+  </script>
+</body>
+</html>
+  </style>
+</head>
+<body>
+
+
+
+
+  <!-- ============ سكربت الطلب ============ -->
+  <script>
+    // مصفوفة الطلبات
+    // let order = []; // Removed duplicate declaration
+
+    /* تحميل الطلبات المحفوظة */
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('order');
+      if (saved) {
+        try { order = JSON.parse(saved); } catch { order = []; }
+      }
+      renderOrder();
+    });
+
+    /* حفظ في localStorage */
+    const saveOrder = () => localStorage.setItem('order', JSON.stringify(order));
+
+    /* إضافة صنف */
+    window.addToOrder = function(name, price) {
+      const found = order.find(i => i.name === name);
+      if (found) {
+        found.qty++;
+      } else {
+        order.push({ name, price: +price, qty: 1 });
+      }
+      saveOrder();
+      renderOrder();
+    }
+
+    /* إزالة صنف */
+    window.removeItem = function(idx) {
+      order.splice(idx, 1);
+      saveOrder();
+      renderOrder();
+    }
+
+    /* رسم الملخص */
+    function renderOrder() {
+      const list = document.getElementById('order-list');
+      list.innerHTML = '';
+      order.forEach((item, i) => {
+        const li = document.createElement('li');
+        const qtyTxt = item.qty > 1 ? ` × ${item.qty}` : '';
+        li.innerHTML = `
+          ${item.name}${qtyTxt} - ${(item.price * item.qty).toLocaleString()} ل.ل
+          <button class="delete-btn" onclick="removeItem(${i})">حذف</button>`;
+        list.appendChild(li);
+      });
+    }
+
+    /* إرسال الطلب */
+    window.sendOrder = function() {
+      if (!order.length) return alert('لم تُضف أي صنف!');
+      let msg = 'طلب جديد:\n';
+      order.forEach(o => {
+        const tot = (o.price * o.qty).toLocaleString();
+        msg += `- ${o.name}${o.qty > 1 ? ` × ${o.qty}` : ''} - ${tot} ل.ل\n`;
+      });
+      const phone = '+96176657606';
+      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+  </script>
+
+</body>
+</html>

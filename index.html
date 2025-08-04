@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+ 
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+/* html font-size revert */
+body{
+  font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;
+  background:#fff8f0;color:#333;direction:rtl;scroll-behavior:smooth
+    }
+    nav{
+      position:fixed;top:0;left:0;right:0;
+      background:#d35400;color:#fff;
+      display:flex;justify-content:space-between;align-items:center;
+      padding:10px 24px;z-index:1000;box-shadow:0 2px 6px rgba(0,0,0,.2)
+    }
+    nav .logo{display:flex;align-items:center;cursor:pointer}
+    nav .logo img{height:40px;margin-left:10px;border-radius:6px}
+    nav .logo span{font-weight:700;font-size:1.25rem}
+    nav ul{list-style:none;display:flex;gap:20px}
+    nav ul li{cursor:pointer;font-weight:600;transition:opacity .3s}
+    nav ul li:hover{opacity:.8}
+
+    .hero{
+      height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+      background:url('WhatsApp Image 2025-05-06 at 15.10.03_9758b2d6.jpg') center/cover no-repeat;
+      text-align:center;color:#fff;text-shadow:2px 2px 5px rgba(0,0,0,.6);
+      padding-top:70px
+    }
+    .hero h1{font-size:3rem;font-weight:900;letter-spacing:2px;margin-bottom:16px}
+    .hero button{
+      background:#d35400;color:#fff;border:none;border-radius:40px;
+      padding:12px 32px;font-size:1.1rem;font-weight:700;cursor:pointer;
+      box-shadow:0 6px 12px rgba(211,84,0,.6);transition:background .3s
+    }
+    .hero button:hover{background:#e67e22}
+
+    .categories{max-width:1100px;margin:60px auto 40px;padding:0 16px}
+    .categories h2{font-size:2rem;font-weight:700;color:#d35400;text-align:center;margin-bottom:28px}
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:24px;
+    }
+    .card{
+      height:350px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      background:#fff;
+      border-radius:12px;
+      box-shadow:0 6px 14px rgba(0,0,0,.1);
+      overflow:hidden;
+      cursor:pointer;
+      transition:transform .3s,box-shadow .3s
+    }
+    .card:hover{transform:translateY(-8px);box-shadow:0 14px 24px rgba(0,0,0,.15)}
+    .card img{width:100%;height:200px;object-fit:cover;border-bottom:4px solid #d35400}
+    .card h3{text-align:center;padding:16px;color:#d35400;font-weight:700;font-size:1.3rem}
+
+    /* Mobile improvements: larger text/cards and horizontal scroll for categories */
+    @media(max-width:600px){
+      .categories{padding:0 4px}
+      .categories h2{font-size:1.5rem}
+      .grid{
+        display:flex;
+        flex-direction:row;
+        overflow-x:auto;
+        gap:16px;
+        -webkit-overflow-scrolling:touch;
+        scroll-snap-type:x mandatory;
+      }
+      .card{
+        min-width:80vw;
+        max-width:90vw;
+        height:320px;
+        flex:0 0 auto;
+        scroll-snap-align:center;
+      }
+      .card img{height:140px}
+      .card h3{font-size:1.2rem;padding:12px}
+    }
+
+    .contact{
+      max-width:600px;margin:0 auto 60px;background:#d35400;color:#fff;
+      text-align:center;padding:36px 20px;border-radius:12px;
+      box-shadow:0 6px 15px rgba(211,84,0,.6)
+    }
+    .contact h2{font-size:1.9rem;margin-bottom:14px}
+    .contact p{font-size:1.1rem;margin-bottom:22px}
+    .contact a{
+      display:inline-block;background:#fff;color:#d35400;font-weight:700;
+      padding:14px 28px;border-radius:40px;font-size:1.15rem;
+      box-shadow:0 6px 14px rgba(255,255,255,.7);transition:.3s
+    }
+    .contact a:hover{background:#e67e22;color:#fff}
+
+    footer{background:#f2f2f2;text-align:center;padding:18px 10px;font-size:.9rem;color:#666;border-top:1px solid #ddd}
+
+    #report{
+      position:fixed;bottom:22px;left:22px;display:flex;align-items:center;gap:8px;
+      background:#25d366;color:#fff;padding:12px 20px;border:none;border-radius:50px;
+      font-weight:700;cursor:pointer;z-index:1200;box-shadow:0 6px 12px rgba(37,211,102,.55);
+      transition:background .3s
+    }
+    #report:hover{background:#128c4a}
+    #report svg{width:20px;height:20px;fill:#fff}
+
+    @media(max-width:480px){
+      .hero h1{font-size:2rem}
+      .hero button{font-size:1rem;padding:10px 24px}
+      #report{padding:10px 16px;font-size:.9rem}
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="logo" onclick="scrollToTop()">
+      <img src="WhatsApp Image 2025-05-06 at 15.10.03_9758b2d6.jpg" alt="شعار"/>
+      <a href="website.html" style="color:#fff;text-decoration:none;font-weight:700;font-size:1.25rem;margin-right:10px;">معجنات نعمة</a>
+    </div>
+    <ul>
+      <li onclick="scrollToSection('categories')">التصنيفات</li>
+      <li onclick="scrollToSection('contact')">تواصل معنا</li>
+    </ul>
+  </nav>
+
+  <section class="hero">
+    
+    <button onclick="scrollToSection('categories')">اطلب الآن</button>
+  </section>
+
+  <section id="categories" class="categories">
+    <h2>التصنيفات</h2>
+    <div class="grid">
+      <div class="card" onclick="location.href='manakish.html'">
+        <img src="download.jpeg" alt="مناقيش">
+        <h3>مناقيش</h3>
+      </div>
+      <div class="card" onclick="location.href='pizza.html'">
+        <img src="download (3).jpeg" alt="بيتزا">
+        <h3>بيتزا</h3>
+      </div>
+      <div class="card" onclick="location.href='moaajanat.html'">
+        <img src="معجنات.jpeg" alt="معجنات">
+        <h3>معجنات</h3>
+      </div>
+      <div class="card" onclick="location.href='kaakeh.html'">
+        <img src="download (1).jpeg" alt="كعك">
+        <h3>كعك</h3>
+      </div>
+      <div class="card" onclick="location.href='jreesh.html'">
+        <img src="download (2).jpeg" alt="جريش">
+        <h3>جريش</h3>
+      </div>
+      <div class="card" onclick="location.href='mashroobat.html'">
+        <img src="images.jpeg" alt="مشروبات">
+        <h3>مشروبات</h3>
+      </div>
+ 
+    </div>
+  </section>
+
+
+  <section id="contact" class="contact">
+    <h2>للطلب والاستفسار</h2>
+    <p>يمكنك التواصل معنا عبر الواتساب</p>
+    <a href="https://wa.me/96176657606" target="_blank" style="display:inline-block;background:#fff;color:#d35400;font-weight:700;padding:14px 28px;border-radius:40px;font-size:1.15rem;box-shadow:0 6px 14px rgba(255,255,255,.7);border:none;cursor:pointer;transition:.3s;text-decoration:none;">ارسل الطلب عبر واتساب</a>
+  </section>
+
+  <footer>© 2025 معجنات نعمة | جميع الحقوق محفوظة</footer>
+
+  <button id="report" onclick="reportIssue()">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.52 3.48A11.95 11.95 0 0012 0C5.37 0 0 5.37 0 12c0 2.11.56 4.08 1.52 5.81L0 24l6.29-1.5A11.94 11.94 0 0012 24c6.63 0 12-5.37 12-12a11.95 11.95 0 00-3.48-8.52zM12 21.55a9.54 9.54 0 01-5.23-1.54l-.37-.23-3.73.9.94-3.65-.24-.38A9.54 9.54 0 012.45 12c0-5.27 4.28-9.55 9.55-9.55 5.27 0 9.55 4.28 9.55 9.55 0 5.27-4.28 9.55-9.55 9.55zm5.06-7.1l-1.09-1.61a.47.47 0 00-.41-.22c-.1 0-.21.02-.3.09-.31.22-1.09.84-1.26.94a.3.3 0 01-.48-.16c-.18-.54-.6-1.33-.82-1.8a.22.22 0 00-.3-.11c-.1 0-.3.09-.46.23-.16.13-.62.6-.62 1.46s.64 1.7.73 1.82c.09.12 1.26 1.93 3.05 2.7 1.7.7 1.7.47 2 .44.3-.02.95-.4 1.08-.8.13-.4.13-.74.09-.8z"/></svg>
+    تبليغ مشكلة
+  </button>
+
+  <script>
+    const scrollToSection=id=>document.getElementById(id).scrollIntoView({behavior:'smooth'});
+    const scrollToTop=()=>window.scrollTo({top:0,behavior:'smooth'});
+    function reportIssue(){
+      const phone='+96176657606';
+      const msg=encodeURIComponent('مرحبًا، أود الإبلاغ عن مشكلة في الموقع.');
+      window.open(`https://wa.me/${phone}?text=${msg}`,'_blank');
+    }
+
+    // Delivery Modal Logic
+    const deliveryBtn = document.getElementById('deliveryBtn');
+    const deliveryModal = document.getElementById('deliveryModal');
+    const deliverySelect = document.getElementById('deliverySelect');
+    const deliveryPrices = {
+      saksakie: 100,
+      loubie: 200,
+      bablie: 200,
+      sarafand: 200,
+      saksakie_khayzaran: 200
+    };
+    const deliveryNames = {
+      saksakie: 'سكسكية',
+      loubie: 'لوبية',
+      bablie: 'بابليّة',
+      sarafand: 'الصرفند',
+      saksakie_khayzaran: 'سكسكية خيزران'
+    };
+    deliveryBtn.onclick = function() {
+      deliveryModal.style.display = 'flex';
+      // Set default state
+      document.querySelector('input[name="deliveryType"][value="with"]').checked = true;
+      deliverySelect.disabled = false;
+      deliverySelect.value = '';
+    };
+    // Toggle select enable/disable based on radio
+    document.addEventListener('DOMContentLoaded', function() {
+      const radios = document.getElementsByName('deliveryType');
+      radios.forEach(radio => {
+        radio.addEventListener('change', function() {
+          if(this.value === 'with') {
+            deliverySelect.disabled = false;
+          } else {
+            deliverySelect.disabled = true;
+            deliverySelect.value = '';
+          }
+        });
+      });
+    });
+    function closeDeliveryModal() {
+      deliveryModal.style.display = 'none';
+    }
+    function sendWhatsAppOrder() {
+      const phone = '+96176657606';
+      let msg = 'مرحبًا، أود تقديم طلب.';
+      const deliveryType = document.querySelector('input[name="deliveryType"]:checked').value;
+      const selected = deliverySelect.value;
+      if(deliveryType === 'with' && selected && deliveryPrices[selected]) {
+        msg += `\nالتوصيل إلى: ${deliveryNames[selected]}\nسعر التوصيل: ${deliveryPrices[selected].toLocaleString()} ل.ل`;
+      } else {
+        msg += '\nبدون توصيل';
+      }
+      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`,'_blank');
+      closeDeliveryModal();
+    }
+  </script>
+</body>
+</html>
+
